@@ -8,6 +8,8 @@ import { LeafletMouseEvent } from 'leaflet';
 import axios from 'axios';
 import api from '../../services/api';
 
+import Dropzone from '../../components/dropzone';
+
 import './styles.css';
 
 import logo from '../../assets/logo.svg';
@@ -46,6 +48,7 @@ const CreatePoint = () => {
     const [selectedCity, setSelectedCity] = useState('0');
     const [selectedItems, setSelectedItems] = useState<number[]>([]);
     const [selectedPosition, setSelectedPosition] = useState<[number, number]>([0, 0]);
+    const [selectedFile, setSelectedFile] = useState<File>();
 
     useEffect(() => {
         navigator.geolocation.getCurrentPosition(position => {
@@ -136,18 +139,22 @@ const CreatePoint = () => {
         const [latitude, longitude] = selectedPosition;
         const items = selectedItems;
 
-        const dataItem = {
-            name,
-            email,
-            whatsapp,
-            uf,
-            city,
-            latitude,
-            longitude,
-            items
-        };
+        const dataForm = new FormData();
 
-        await api.post('/points', dataItem).then(response => (response.data));
+        dataForm.append('name', name);
+        dataForm.append('email', email);
+        dataForm.append('whatsapp', whatsapp);
+        dataForm.append('uf', uf);
+        dataForm.append('city', city);
+        dataForm.append('latitude', String(latitude));
+        dataForm.append('longitude', String(longitude));
+        dataForm.append('items', items.join(','));
+
+        if (selectedFile) {
+            dataForm.append('image', selectedFile);
+        }
+
+        await api.post('/points', dataForm).then(response => (response.data));
 
         toast.info('Ponto de coleta cadastrado com sucesso!', {
             position: "top-right",
@@ -174,6 +181,8 @@ const CreatePoint = () => {
 
             <form onSubmit={handleSubmit}>
                 <h1>Cadastro do <br/> ponto de coleta</h1>
+
+                <Dropzone onFileUploaded={setSelectedFile} />
 
                 <fieldset>
                     <legend>

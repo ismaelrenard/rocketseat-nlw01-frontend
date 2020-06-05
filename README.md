@@ -2,6 +2,10 @@
 
 Ecoleta Web foi feito em ReacJS durante a NLW #01 da Rocketseat.
 
+## URL da aplicação
+
+[Acessar Aplicação](wonderful-hypatia-a5b045.netlify.app)
+
 
 ## Instalando e Executando
 
